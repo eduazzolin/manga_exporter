@@ -1,12 +1,15 @@
 # Manga Exporter for Houdoku
 ## Description
-This is a simple tool to export your manga library from [Houdoku](https://github.com/xgi/houdoku)
+![image](https://github.com/eduazzolin/manga_exporter/assets/114076084/46ee4dba-084f-4411-b389-6e11795e9219)
+<br>This is a simple tool to export your manga library from [Houdoku](https://github.com/xgi/houdoku)
 to PDF files. It is written in Python and uses [pypdf](https://pypdf.readthedocs.io/en/stable/) and [Pillow](https://pillow.readthedocs.io/en/stable/) to generate the PDFs.
 I've made this tool because I wanted to export my manga library to PDFs so I can read them on my **Kindle**.
 ### 1. Export each chapter to a separate PDF file.
-This function will export each chapter in your library to a separate PDF file. It will iterate through all the chapters folders and group the images into PDF files.
+![1](https://github.com/eduazzolin/manga_exporter/assets/114076084/6a98d747-16fc-4944-b9f4-1a7d500667ea)
+<br>This function will export each chapter in your library to a separate PDF file. It will iterate through all the chapters folders and group the images into PDF files.
 ### 2. Group chapters into volumes and export each volume to a separate PDF file.
-Based on a manually created dictionary, this function will group the chapters into volumes and export each volume to a separate PDF file. 
+![2](https://github.com/eduazzolin/manga_exporter/assets/114076084/59aa5857-31dd-4f12-ba35-74bbea09fe7d)
+<br>Based on a manually created dictionary, this function will group the chapters PDFs into volumes and export each volume to a separate PDF file. 
 💡 _Tip: You can later use [Calibre](https://calibre-ebook.com/) to convert the PDF files to a Kindle supported format with covers and metadata._
 ## How to use
 ### 1. Download this repository and install the requirements.
@@ -22,7 +25,7 @@ For the script to work, you need to edit the `config.json` file. The file contai
 - `AUTHOR`: The author of the series. e.g. 'Kentaro Miura'
 - `ROOT`: The root folder of the series. e.g. 'C:\\Users\\eduaz\\mangas\\Berserk'
 - `VOLUME_FILENAME_TEMPLATE`: The template for the volume filename. You can use `[NAME]`, `[AUTHOR]` AND `[VOLUME]` as placeholders e.g. `[NAME] Vol. [VOLUME].pdf` -> 'Berserk Vol. 18.pdf'
-- `DICTIONARY`: A list of dictionaries containing the volume number and the first and last chapter of the volume. e.g. `[{"volume": 1, "first_chapter": 1, "last_chapter": 5}, {"volume": 2, "first_chapter": 6, "last_chapter": 10}]` ?? tip: you can copy and paste the wikipedia page of the series into an IA to generate the dictionary according to the dictionary rules.
+- `DICTIONARY`: A list of dictionaries containing the volume number and the first and last chapter of the volume. e.g. `[{"volume": 1, "first_chapter": 1, "last_chapter": 5}, {"volume": 2, "first_chapter": 6, "last_chapter": 10}]` *💡Tip: you can copy and paste the wikipedia page of the series into an IA to generate the dictionary according to the dictionary rules.*
 #### Example
 ```json
 {
@@ -80,3 +83,6 @@ To run the script, you need to run the following command:
 ```bash
 python manga-exporter.py
 ```
+## References
+- ASCII logo: font [tmplr by Eugene Ghanizadeh Khoub](https://patorjk.com/software/taag/#p=author&f=Tmplr&t=MANGA%20EXPORTER)
+- Mew ASCII ART: [TwitchQuotes](https://www.twitchquotes.com/copypastas/5180)
