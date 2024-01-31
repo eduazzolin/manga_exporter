@@ -2,7 +2,7 @@
   "NAME": "InuYasha",
   "AUTHOR": "Rumiko Takahashi",
   "ROOT": "C:\\Users\\eduaz\\mangas\\InuYasha",
-  "VOLUME_FILENAME_TEMPLATE": "[NAME] Vol. [VOLUME].pdf",
+  "VOLUME_FILENAME_TEMPLATE": "[NAME] Vol. [VOLUME] - [AUTHOR].pdf",
   "DICTIONARY": [
     { "volume": 1, "first_chapter": 1, "last_chapter": 8},
     { "volume": 2, "first_chapter": 9, "last_chapter": 18 },

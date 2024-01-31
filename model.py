@@ -71,8 +71,8 @@ class Series:
                 images_rgb = [img.convert('RGB') for img in images_img]
                 images_rgb.pop(0).save(f'{os.path.join(self.root, folder)}.pdf', save_all=True,
                                        append_images=images_rgb)
-
-                print(f'{folder}.pdf {Colors.GREEN}created!{Colors.ENDC}')
+                size = os.path.getsize(f'{os.path.join(self.root, folder)}.pdf')
+                print(f'{folder}.pdf {Colors.GREEN}created! {size / 1000000:.2f} MB{Colors.ENDC}')
             except Exception as e:
                 print(f'{folder}.pdf {Colors.RED}ERROR: {e}{Colors.ENDC}')
                 continue
@@ -91,7 +91,7 @@ class Series:
             merger.write(volume.path)
             size = os.path.getsize(volume.path)
             if size / 100000 > 1:
-                print(f'{volume.filename} {Colors.GREEN}created! {size / 1000000} MB {Colors.ENDC}')
+                print(f'{volume.filename} {Colors.GREEN}created! {size / 1000000:.2f} MB {Colors.ENDC}')
             else:
                 print(f'{volume.filename} {Colors.RED}ERROR: Something went wrong!{Colors.ENDC}')
             merger.close()
