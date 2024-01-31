@@ -62,6 +62,7 @@ class Series:
         """
 
         folders = [folder for folder in os.listdir(self.root) if os.path.isdir(os.path.join(self.root, folder))]
+        folders = sorted(folders, key=lambda x: float(x[x.find(' ') + 1:x.find('-') - 1]))
         for folder in folders:
             try:
                 images_path = [os.path.join(self.root, folder, image) for image in
@@ -73,7 +74,7 @@ class Series:
 
                 print(f'{folder}.pdf {Colors.GREEN}created!{Colors.ENDC}')
             except Exception as e:
-                print(e)
+                print(f'{folder}.pdf {Colors.RED}ERROR: {e}{Colors.ENDC}')
                 continue
 
     def export_volumes(self):
@@ -90,7 +91,7 @@ class Series:
             merger.write(volume.path)
             size = os.path.getsize(volume.path)
             if size / 100000 > 1:
-                print(f'{volume.filename} {Colors.YELLOW}created! {size / 1000000} MB {Colors.ENDC}')
+                print(f'{volume.filename} {Colors.GREEN}created! {size / 1000000} MB {Colors.ENDC}')
             else:
                 print(f'{volume.filename} {Colors.RED}ERROR: Something went wrong!{Colors.ENDC}')
             merger.close()
