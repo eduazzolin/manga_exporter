@@ -5,7 +5,8 @@ from pypdf import PdfWriter
 
 
 class Series:
-    def __init__(self, name: str, author: str, root: str, dictionary: list = None, volumes: list = [],
+    def __init__(self, name: str, author: str, root: str, cover_size: list = None, dictionary: list = None,
+                 volumes: list = [],
                  volumes_filename_template: str = None) -> object:
         """
         Initialize a Series object.
@@ -13,6 +14,7 @@ class Series:
         :param name: The name of the series.
         :param author: The author of the series.
         :param root: The root folder where the series is located.
+        :param cover_size: The size of the cover.
         :param dictionary: A list of dictionaries with volume, start and end.
         :param volumes: A list of Volume objects.
         :param volumes_filename_template: The template for the filename of the volumes.
@@ -20,6 +22,7 @@ class Series:
         self.name = name
         self.author = author
         self.root = root
+        self.cover_size = cover_size
         self.dictionary = sorted(dictionary, key=lambda x: x['volume'])
         self.volumes = volumes
         self.volumes_filename_template = volumes_filename_template
@@ -34,7 +37,8 @@ class Series:
                 number=float(dictionary_entry['volume']),
                 series=self,
                 chapters=[chapter for chapter in all_chapters if
-                          float(dictionary_entry['first_chapter']) <= chapter.number <= float(dictionary_entry['last_chapter'])]
+                          float(dictionary_entry['first_chapter']) <= chapter.number <= float(
+                              dictionary_entry['last_chapter'])]
             )
             self.volumes.append(volume)
 
@@ -45,14 +49,17 @@ class Series:
 
         :return: list of Chapter objects sorted by chapter number.
         """
+        chapter_folders = [folder for folder in os.listdir(self.root) if os.path.isdir(os.path.join(self.root, folder))
+                           if folder.startswith('Chapter')]
         pdf_files = [pdf for pdf in os.listdir(self.root) if pdf.endswith('.pdf') if pdf.startswith('Chapter')]
         chapters = []
-        for pdf in pdf_files:
+        for folder in chapter_folders:
             chapter = Chapter()
             chapter.series = self
-            chapter.filename = pdf
-            chapter.number = float(pdf[pdf.find(' ') + 1:pdf.find('-') - 1])
-            chapter.path = os.path.join(self.root, pdf)
+            chapter.filename = folder + '.pdf' if folder + '.pdf' in pdf_files else None
+            chapter.number = float(folder[folder.find(' ') + 1:folder.find('-') - 1])
+            chapter.path = os.path.join(self.root, chapter.filename)
+            chapter.folder_path = os.path.join(self.root, folder)
             chapters.append(chapter)
         return sorted(chapters, key=lambda x: x.number)
 
@@ -75,6 +82,22 @@ class Series:
                 print(f'{folder}.pdf {Colors.GREEN}created! {size / 1000000:.2f} MB{Colors.ENDC}')
             except Exception as e:
                 print(f'{folder}.pdf {Colors.RED}ERROR: {e}{Colors.ENDC}')
+                continue
+
+    def resize_volume_covers(self):
+        """
+        It will iterate over the first chapter of each volume and resize the cover to the specified size.
+        Creating a new file called 00.jpg in the folder of the first chapter.
+        """
+        all_chapters = self.get_all_chapters()
+        first_chapter_numbers = [d['first_chapter'] for d in self.dictionary]
+        all_first_chapters = [chapter for chapter in all_chapters if chapter.number in first_chapter_numbers]
+        for c in all_first_chapters:
+            try:
+                c.resize_cover_to_(self.cover_size[0], self.cover_size[1])
+                print(f'{c.filename[:c.filename.rfind(".pdf")]}/00.jpg {Colors.GREEN}created!{Colors.ENDC}')
+            except Exception as e:
+                print(f'{c.filename[:c.filename.rfind(".pdf")]}/00.jpg {Colors.RED}ERROR: {e}{Colors.ENDC}')
                 continue
 
     def export_volumes(self):
@@ -126,17 +149,40 @@ class Volume:
 
 
 class Chapter:
-    def __init__(self, number: float = None, filename: str = None, path: str = None):
+    def __init__(self, number: float = None, filename: str = None, folder_path: str = None, path: str = None):
         """
         Initialize a Chapter object.
 
         :param number: The number of the chapter.
-        :param filename: The filename of the chapter.
-        :param path: The path of the chapter.
+        :param filename: The filename of the chapter in PDF.
+        :param folder_path: The path of the folder containing the chapter's images.
+        :param path: The path of the chapter in PDF.
         """
         self.number = number
         self.filename = filename
         self.path = path
+        self.folder_path = folder_path
+
+    def resize_cover_to_(self, height: int, width: int):
+        """
+        Resize the cover of the chapter to the specified height and width. First the image is resized to the
+        specified width and then cropped to the specified height by the center.
+        :param height: the height of the cover
+        :param width:  the width of the cover
+        """
+        # https://stackoverflow.com/questions/273946/how-do-i-resize-an-image-using-pil-and-maintain-its-aspect-ratio
+        # https://stackoverflow.com/questions/20361444/cropping-an-image-with-python-pillow
+
+        image = Image.open(self.folder_path + '/01.jpg')
+        w_percent = (width / float(image.size[0]))
+        height_before_crop = int((float(image.size[1]) * float(w_percent)))
+        c_left = 0
+        c_right = width
+        c_top = (height_before_crop - height) / 2
+        c_bottom = ((height_before_crop - height) / 2) + height
+        result = ((image.resize((width, height_before_crop), Image.Resampling.LANCZOS)
+                  .crop((int(c_left), int(c_top), int(c_right), int(c_bottom))))
+                  .save(os.path.join(self.folder_path, '00.jpg')))
 
 
 class Colors:
