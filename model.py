@@ -58,7 +58,7 @@ class Series:
             chapter.series = self
             chapter.filename = folder + '.pdf' if folder + '.pdf' in pdf_files else None
             chapter.number = float(folder[folder.find(' ') + 1:folder.find('-') - 1])
-            chapter.path = os.path.join(self.root, chapter.filename)
+            chapter.path = os.path.join(self.root, chapter.filename) if chapter.filename is not None else None
             chapter.folder_path = os.path.join(self.root, folder)
             chapters.append(chapter)
         return sorted(chapters, key=lambda x: x.number)
@@ -95,9 +95,9 @@ class Series:
         for c in all_first_chapters:
             try:
                 c.resize_cover_to_(self.cover_size[0], self.cover_size[1])
-                print(f'{c.filename[:c.filename.rfind(".pdf")]}/00.jpg {Colors.GREEN}created!{Colors.ENDC}')
+                print(f'{c.folder_path}/00.jpg {Colors.GREEN}created!{Colors.ENDC}')
             except Exception as e:
-                print(f'{c.filename[:c.filename.rfind(".pdf")]}/00.jpg {Colors.RED}ERROR: {e}{Colors.ENDC}')
+                print(f'{c.folder_path}/00.jpg {Colors.RED}ERROR: {e}{Colors.ENDC}')
                 continue
 
     def export_volumes(self):
@@ -106,7 +106,7 @@ class Series:
         """
         for volume in self.volumes:
             if len(volume.chapters) == 0:
-                print(f'{volume.filename} {Colors.RED}ERROR: No chapter found!{Colors.ENDC}')
+                print(f'{volume.filename} {Colors.RED}No chapter found!{Colors.ENDC}')
                 continue
             merger = PdfWriter()
             for chapter in volume.chapters:
@@ -181,7 +181,7 @@ class Chapter:
         c_top = (height_before_crop - height) / 2
         c_bottom = ((height_before_crop - height) / 2) + height
         result = ((image.resize((width, height_before_crop), Image.Resampling.LANCZOS)
-                  .crop((int(c_left), int(c_top), int(c_right), int(c_bottom))))
+                   .crop((int(c_left), int(c_top), int(c_right), int(c_bottom))))
                   .save(os.path.join(self.folder_path, '00.jpg')))
 
 
