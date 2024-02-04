@@ -1,5 +1,8 @@
-from model import *
 import json
+import os
+
+from model import *
+
 
 def print_logo():
     print(f"""
@@ -8,6 +11,7 @@ def print_logo():
 ┛ ┗┛┗┛┗┗┛┛┗  ┗┛┗┛┗┛┣┛┗┛┛┗ ┻ ┗┛┛┗
                      {Colors.GRAY}for Houdoku{Colors.ENDC}
 """)
+
 
 def show_menu(series):
     choice = ''
@@ -51,10 +55,32 @@ Options:
             choice = '0'
 
 
+def select_dictionary() -> object:
+    dictionary_list = [f for f in os.listdir('dictionaries') if f.endswith('.json')]
+
+    print(f"{Colors.BOLD}Select a dictionary:{Colors.ENDC}")
+    for i, dictionary in enumerate(dictionary_list):
+        print(f"{i + 1} - {dictionary}")
+    choice = input('\nType the number of the dictionary and press Enter: ')
+    with open(f'dictionaries\\{dictionary_list[int(choice) - 1]}', 'r') as config_file:
+        return json.load(config_file)
+
+
+def show_config(config):
+    print(f"""
+{Colors.BOLD}CONFIGURATION{Colors.ENDC}
+{Colors.BOLD}Name:{Colors.ENDC} {config["NAME"]}
+{Colors.BOLD}Author:{Colors.ENDC} {config["AUTHOR"]}
+{Colors.BOLD}Root folder:{Colors.ENDC} {config["ROOT"]}
+{Colors.BOLD}Volume filename template:{Colors.ENDC} {config["VOLUME_FILENAME_TEMPLATE"]}
+{Colors.BOLD}Cover size:{Colors.ENDC} {config["COVER_SIZE"]}
+{Colors.BOLD}Dictionary:{Colors.ENDC} {"Ok!" if config["DICTIONARY"] else "Not Ok!"}
+""")
+
+
 class Main:
-    import os
-    with open('config.json', 'r') as config_file:
-        config = json.load(config_file)
+    print_logo()
+    config = select_dictionary()
 
     NAME = config["NAME"]
     AUTHOR = config["AUTHOR"]
@@ -63,7 +89,7 @@ class Main:
     COVER_SIZE = config["COVER_SIZE"]
     DICTIONARY = config["DICTIONARY"]
 
-
+    show_config(config)
     series: Series = Series(
         name=NAME,
         author=AUTHOR,
@@ -73,6 +99,4 @@ class Main:
         dictionary=DICTIONARY,
     )
 
-    print_logo()
     show_menu(series)
-

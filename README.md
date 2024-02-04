@@ -20,11 +20,12 @@ cd manga_exporter
 pip install -r requirements.txt
 ```
 ### 2. Edit the `config.json` file.
-For the script to work, you need to edit the `config.json` file. The file contains the following fields:
+For the script to work, you need to copy and edit one `config.json` file in the `dictionaries` folder. The file contains the following fields:
 - `NAME`: The name of the series. e.g. 'Berserk'
 - `AUTHOR`: The author of the series. e.g. 'Kentaro Miura'
 - `ROOT`: The root folder of the series. e.g. 'C:\\Users\\eduaz\\mangas\\Berserk'
 - `VOLUME_FILENAME_TEMPLATE`: The template for the volume filename. You can use `[NAME]`, `[AUTHOR]` AND `[VOLUME]` as placeholders e.g. `[NAME] Vol. [VOLUME].pdf` -> 'Berserk Vol. 18.pdf'
+- `COVER_SIZE`: The size of the cover in pixels if you intend to use the _resize cover_ option. e.g. `[800, 600]`
 - `DICTIONARY`: A list of dictionaries containing the volume number and the first and last chapter of the volume. e.g. `[{"volume": 1, "first_chapter": 1, "last_chapter": 5}, {"volume": 2, "first_chapter": 6, "last_chapter": 10}]` *💡Tip: you can copy and paste the wikipedia page of the series into an IA to generate the dictionary according to the dictionary rules.*
 #### Example
 ```json
