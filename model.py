@@ -1,7 +1,7 @@
 import os
 
 from PIL import Image
-from pypdf import PdfWriter
+from PyPDF2 import PdfReader, PdfWriter #TODO add to requirements.txt
 
 
 class Series:
@@ -105,20 +105,24 @@ class Series:
         Export volumes of the series by merging the chapters into a single PDF.
         """
         for volume in self.volumes:
-            if len(volume.chapters) == 0:
-                print(f'{volume.filename} {Colors.RED}No chapter found!{Colors.ENDC}')
-                continue
-            merger = PdfWriter()
-            for chapter in volume.chapters:
-                merger.append(chapter.path)
-            merger.write(volume.path)
-            size = os.path.getsize(volume.path)
-            if size / 100000 > 1:
-                print(f'{volume.filename} {Colors.GREEN}created! {size / 1000000:.2f} MB {Colors.ENDC}')
-            else:
-                print(f'{volume.filename} {Colors.RED}ERROR: Something went wrong!{Colors.ENDC}')
-            merger.close()
-
+            try:
+                if len(volume.chapters) == 0:
+                    raise Exception(f"{Colors.RED}No chapter found!{Colors.ENDC}")
+                merger = PdfWriter()
+                for chapter in volume.chapters:
+                    if chapter.path is not None:
+                        merger.append(chapter.path)
+                    else:
+                        raise Exception(f"Missing chapter's PDF file")
+                merger.write(volume.path)
+                size = os.path.getsize(volume.path)
+                if size / 100000 > 1:
+                    print(f'{volume.filename} {Colors.GREEN}created! {size / 1000000:.2f} MB {Colors.ENDC}')
+                else:
+                    raise Exception(f"{Colors.RED}Something went wrong!{Colors.ENDC}")
+                merger.close()
+            except Exception as e:
+                print(f'{volume.filename} {Colors.RED}ERROR: {e}{Colors.ENDC}')
 
 class Volume:
     """
