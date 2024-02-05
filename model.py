@@ -197,27 +197,18 @@ class Chapter:
         # https://stackoverflow.com/questions/273946/how-do-i-resize-an-image-using-pil-and-maintain-its-aspect-ratio
         # https://stackoverflow.com/questions/20361444/cropping-an-image-with-python-pillow
 
-        # resize the image to the specified width
         image = Image.open(self.folder_path + '/01.jpg')
         h_percent = (height / float(image.size[1]))
         w_before_crop = int((float(image.size[0]) * float(h_percent)))
 
         w_difference = abs(width - w_before_crop) // 2
-        c_left = -w_difference
-        c_right = w_before_crop + w_difference
-        c_top = 0
-        c_bottom = height
         new_image = Image.new("RGB", (width, height), (255, 255, 255))
-        paste_position = (
-            w_difference,
-            0,
-        )
-        result = ((image.resize((w_before_crop, height), Image.Resampling.LANCZOS)
-                  .save(os.path.join(self.folder_path, '00.jpg'))))
+        paste_position = (w_difference, 0)
+        (image.resize((w_before_crop, height), Image.Resampling.LANCZOS)
+         .save(os.path.join(self.folder_path, '00.jpg')))
 
         new_image.paste(Image.open(self.folder_path + '/00.jpg'), paste_position)
         new_image.save(os.path.join(self.folder_path, '00.jpg'))
-
 
 
 class Colors:
