@@ -113,7 +113,7 @@ class Series:
                 for chapter in volume.chapters:
                     if chapter.path is not None:
                         merger.append(chapter.path)
-                        merger.add_outline_item(f"Chapter {chapter.number}", len(merger.pages) - chapter.get_page_num())
+                        merger.add_outline_item(f"Chapter {chapter.number:g}", len(merger.pages) - chapter.get_page_num())
                     else:
                         raise Exception(f"Missing chapter's PDF file")
 
