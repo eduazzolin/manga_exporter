@@ -184,6 +184,29 @@ class Chapter:
                    .crop((int(c_left), int(c_top), int(c_right), int(c_bottom))))
                   .save(os.path.join(self.folder_path, '00.jpg')))
 
+    def resize_cover_to_with_white_lateral_borders(self, height: int, width: int):
+        """
+        Resize the cover of the chapter to the specified height and width. First the image is resized to the
+        specified height and then is pasted in a white background with the specified width and height.
+        :param height: the height of the cover
+        :param width:  the width of the cover
+        """
+        # https://stackoverflow.com/questions/273946/how-do-i-resize-an-image-using-pil-and-maintain-its-aspect-ratio
+        # https://stackoverflow.com/questions/20361444/cropping-an-image-with-python-pillow
+
+        image = Image.open(self.folder_path + '/01.jpg')
+        h_percent = (height / float(image.size[1]))
+        w_before_crop = int((float(image.size[0]) * float(h_percent)))
+
+        w_difference = abs(width - w_before_crop) // 2
+        new_image = Image.new("RGB", (width, height), (255, 255, 255))
+        paste_position = (w_difference, 0)
+        (image.resize((w_before_crop, height), Image.Resampling.LANCZOS)
+         .save(os.path.join(self.folder_path, '00.jpg')))
+
+        new_image.paste(Image.open(self.folder_path + '/00.jpg'), paste_position)
+        new_image.save(os.path.join(self.folder_path, '00.jpg'))
+
 
 class Colors:
     RED = '\033[91m'
