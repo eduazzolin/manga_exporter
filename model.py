@@ -105,24 +105,31 @@ class Series:
         Export volumes of the series by merging the chapters into a single PDF.
         """
         for volume in self.volumes:
+            merger = PdfWriter()
             try:
                 if len(volume.chapters) == 0:
                     raise Exception(f"{Colors.RED}No chapter found!{Colors.ENDC}")
-                merger = PdfWriter()
+
                 for chapter in volume.chapters:
                     if chapter.path is not None:
                         merger.append(chapter.path)
+                        merger.add_outline_item(f"Chapter {chapter.number}", len(merger.pages) - chapter.get_page_num())
                     else:
                         raise Exception(f"Missing chapter's PDF file")
+
                 merger.write(volume.path)
+
                 size = os.path.getsize(volume.path)
-                if size / 100000 > 1:
+                if size > 100000:
                     print(f'{volume.filename} {Colors.GREEN}created! {size / 1000000:.2f} MB {Colors.ENDC}')
                 else:
                     raise Exception(f"{Colors.RED}Something went wrong!{Colors.ENDC}")
-                merger.close()
             except Exception as e:
                 print(f'{volume.filename} {Colors.RED}ERROR: {e}{Colors.ENDC}')
+            finally:
+                merger.close()
+
+
 
 class Volume:
     """
@@ -166,6 +173,19 @@ class Chapter:
         self.filename = filename
         self.path = path
         self.folder_path = folder_path
+
+    def get_page_num(self):
+        """
+        Get the number of pages of the chapter's PDF.
+        :return: int number of pages
+        """
+        try:
+            reader = PdfReader(self.path)
+            return len(reader.pages)
+        except Exception as e:
+            print(f'{self.path} {Colors.RED}ERROR: {e}{Colors.ENDC}')
+            return 0
+
 
     def resize_cover_to_(self, height: int, width: int):
         """
